@@ -426,7 +426,9 @@ def _history_sort_key(
     item: tuple[str, PadHistoryEntryDict],
     /,
 ) -> tuple[int, str]:
-    """Return the sort key for a Firebase history entry: timestamp, then ID."""
+    """Return the sort key for a Firebase history entry: timestamp, then
+    ID.
+    """
     entry_id, entry = item
     return (entry["t"], entry_id)
 
