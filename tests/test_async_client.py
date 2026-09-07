@@ -7,12 +7,14 @@ from pathlib import Path
 from urllib.parse import parse_qs
 
 import httpx
+import httpx2
 import pytest
 import respx
 
 from coderpad.async_client import AsyncCoderPad
 from coderpad.exceptions import NotFoundError
 from coderpad.transports import (
+    AsyncHTTPX2Transport,
     AsyncHTTPXTransport,
     AsyncTransport,
     TransportResponse,
@@ -330,6 +332,84 @@ class TestAsyncHTTPXTransport:
         assert transport.limits is limits
         assert transport.timeout == timeout
         await transport.aclose()
+
+
+class TestAsyncHTTPX2Transport:
+    """Tests for ``AsyncHTTPX2Transport``."""
+
+    @staticmethod
+    @pytest.mark.asyncio
+    async def test_is_async_transport() -> None:
+        """AsyncHTTPX2Transport satisfies AsyncTransport."""
+        async with AsyncHTTPX2Transport() as transport:
+            assert isinstance(transport, AsyncTransport)
+
+    @staticmethod
+    @pytest.mark.asyncio
+    async def test_httpx2_configuration_types() -> None:
+        """HTTPX2 configuration objects are stored on the transport."""
+        limits = httpx2.Limits(max_connections=5)
+        proxy = httpx2.Proxy(url="http://proxy.example:8080")
+        timeout = httpx2.Timeout(timeout=12.5)
+        async with AsyncHTTPX2Transport(
+            limits=limits, proxy=proxy, timeout=timeout
+        ) as transport:
+            assert transport.limits is limits
+            assert transport.proxy is proxy
+            assert transport.timeout is timeout
+
+    @staticmethod
+    @pytest.mark.asyncio
+    async def test_real_httpx2_request(httpx2_mock: respx.Router) -> None:
+        """The transport makes a request through an HTTPX2 async
+        client.
+        """
+        httpx2_mock.get(url="https://api.example/items").respond(
+            status_code=HTTPStatus.OK,
+            headers={"X-Family": "httpx2"},
+            content=b"listed",
+        )
+
+        async with AsyncHTTPX2Transport() as transport:
+            response = await transport(
+                method="GET",
+                url="https://api.example/items",
+                headers={"Authorization": "Token"},
+                params={"page": 2},
+                data=None,
+                files=None,
+            )
+
+        assert response == TransportResponse(
+            status_code=HTTPStatus.OK,
+            headers={
+                "x-family": "httpx2",
+                "content-length": "6",
+            },
+            content=b"listed",
+        )
+
+    @staticmethod
+    @pytest.mark.asyncio
+    async def test_httpx2_exception_family(
+        httpx2_mock: respx.Router,
+    ) -> None:
+        """HTTPX2 transport exceptions propagate without conversion."""
+        error = httpx2.ConnectError(message="HTTPX2 failed")
+        httpx2_mock.get(url="https://api.example/failure").mock(
+            side_effect=error
+        )
+
+        with pytest.raises(expected_exception=httpx2.ConnectError):
+            async with AsyncHTTPX2Transport() as transport:
+                await transport(
+                    method="GET",
+                    url="https://api.example/failure",
+                    headers={},
+                    params=None,
+                    data=None,
+                    files=None,
+                )
 
 
 class TestAsyncListPads:

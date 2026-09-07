@@ -35,6 +35,7 @@ dynamic = [
 dependencies = [
     "beartype>=0.22.9",
     "httpx>=0.28.0",
+    "httpx2>=2.12.0",
     "pydantic>=2.12.0",
 ]
 optional-dependencies.dev = [
@@ -64,6 +65,7 @@ optional-dependencies.dev = [
     "pytest-asyncio==1.4.0",
     "pytest-beartype-tests==2026.8.16",
     "pytest-cov==7.1.0",
+    "pytest-httpx2==1.0.0",
     "pyyaml==6.0.3",
     "respx==0.23.1",
     "ruff==0.16.6",
