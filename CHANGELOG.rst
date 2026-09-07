@@ -3,6 +3,19 @@ Changelog
 
 .. towncrier release notes start
 
+2026.09.07
+----------
+
+- Removed ``client.quota.get()``. Use ``client.organization.get_quota()``,
+  which it only delegated to.
+
+- Removed ``PadHistory.replay_to_file`` and ``coderpad.screen.save_screen_report``.
+  Callers can write replayed contents or report bytes with ``pathlib.Path``
+  directly.
+
+- Add synchronous and asynchronous HTTPX2 transports while retaining HTTPX as
+  the default client family.
+
 2026.08.23
 ----------
 

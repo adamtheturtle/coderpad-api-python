@@ -1,2 +1,0 @@
-Removed ``client.quota.get()``. Use ``client.organization.get_quota()``,
-which it only delegated to.

@@ -1,3 +1,0 @@
-Removed ``PadHistory.replay_to_file`` and ``coderpad.screen.save_screen_report``.
-Callers can write replayed contents or report bytes with ``pathlib.Path``
-directly.

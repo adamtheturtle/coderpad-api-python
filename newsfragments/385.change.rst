@@ -1,2 +1,0 @@
-Add synchronous and asynchronous HTTPX2 transports while retaining HTTPX as
-the default client family.
