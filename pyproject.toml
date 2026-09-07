@@ -50,7 +50,7 @@ optional-dependencies.dev = [
     "mypy-strict-kwargs==2026.8.25.1",
     "no-defaults==2.3.0",
     "openapi-mock==2026.8.16",
-    "prek==0.5.1",
+    "prek==0.5.2",
     "pydocstringformatter==1.0.0",
     "pydocstyle==6.3",
     "pygments==2.21.0",
