@@ -18,6 +18,7 @@ from coderpad.async_screen import AsyncScreenNamespace
 from coderpad.exceptions import CoderPadError
 from coderpad.screen import SCREEN_US_BASE_URL
 from coderpad.transports import (
+    AsyncHTTPX2Transport,
     AsyncHTTPXTransport,
     AsyncJSONTransport,
     AsyncTransport,
@@ -924,12 +925,14 @@ class AsyncCoderPad:
 
         if isinstance(
             resolved_transport,
-            AsyncHTTPXTransport,
+            (AsyncHTTPXTransport, AsyncHTTPX2Transport),
         ):
             self._aclose = resolved_transport.aclose
         else:
             self._aclose = _noop
-        if isinstance(screen_transport, AsyncHTTPXTransport):
+        if isinstance(
+            screen_transport, (AsyncHTTPXTransport, AsyncHTTPX2Transport)
+        ):
             self._screen_aclose = screen_transport.aclose
         else:
             self._screen_aclose = _noop
@@ -962,7 +965,7 @@ class AsyncCoderPad:
             )
             if self._screen_transport is None and isinstance(
                 resolved_screen_transport,
-                AsyncHTTPXTransport,
+                (AsyncHTTPXTransport, AsyncHTTPX2Transport),
             ):
                 self._screen_aclose = resolved_screen_transport.aclose
             self._screen_transport = resolved_screen_transport

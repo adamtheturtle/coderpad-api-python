@@ -7,6 +7,7 @@ from pathlib import Path
 from urllib.parse import parse_qs
 
 import httpx
+import httpx2
 import pytest
 import respx
 
@@ -25,6 +26,7 @@ from coderpad.exceptions import (
 )
 from coderpad.transports import (
     HTTPStatusError,
+    HTTPX2Transport,
     HTTPXTransport,
     Transport,
     TransportResponse,
@@ -314,6 +316,79 @@ class TestHTTPXTransport:
         assert transport.limits is limits
         assert transport.timeout == timeout
         transport.close()
+
+
+class TestHTTPX2Transport:
+    """Tests for ``HTTPX2Transport``."""
+
+    @staticmethod
+    def test_is_transport() -> None:
+        """HTTPX2Transport satisfies the Transport protocol."""
+        with HTTPX2Transport() as transport:
+            assert isinstance(transport, Transport)
+
+    @staticmethod
+    def test_httpx2_configuration_types() -> None:
+        """HTTPX2 configuration objects are stored on the transport."""
+        limits = httpx2.Limits(max_connections=5)
+        proxy = httpx2.Proxy(url="http://proxy.example:8080")
+        timeout = httpx2.Timeout(timeout=12.5)
+        with HTTPX2Transport(
+            limits=limits, proxy=proxy, timeout=timeout
+        ) as transport:
+            assert transport.limits is limits
+            assert transport.proxy is proxy
+            assert transport.timeout is timeout
+
+    @staticmethod
+    def test_real_httpx2_request(httpx2_mock: respx.Router) -> None:
+        """The transport makes a request through an HTTPX2 client."""
+        httpx2_mock.post(url="https://api.example/items").respond(
+            status_code=HTTPStatus.CREATED,
+            headers={"X-Family": "httpx2"},
+            content=b"created",
+        )
+
+        with HTTPX2Transport() as transport:
+            response = transport(
+                method="POST",
+                url="https://api.example/items",
+                headers={"Authorization": "Token"},
+                params={"page": 2},
+                data=None,
+                files=None,
+                json={"name": "example"},
+            )
+
+        assert response == TransportResponse(
+            status_code=HTTPStatus.CREATED,
+            headers={
+                "x-family": "httpx2",
+                "content-length": "7",
+            },
+            content=b"created",
+        )
+
+    @staticmethod
+    def test_httpx2_exception_family(httpx2_mock: respx.Router) -> None:
+        """HTTPX2 transport exceptions propagate without conversion."""
+        error = httpx2.ConnectError(message="HTTPX2 failed")
+        httpx2_mock.get(url="https://api.example/failure").mock(
+            side_effect=error
+        )
+
+        with (
+            HTTPX2Transport() as transport,
+            pytest.raises(expected_exception=httpx2.ConnectError),
+        ):
+            transport(
+                method="GET",
+                url="https://api.example/failure",
+                headers={},
+                params=None,
+                data=None,
+                files=None,
+            )
 
 
 class TestTransportResponse:

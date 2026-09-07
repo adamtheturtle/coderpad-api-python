@@ -79,10 +79,14 @@ intersphinx_mapping = {
 nitpicky = True
 nitpick_ignore: list[tuple[str, str]] = [
     ("py:class", "coderpad.types._T"),
-    # httpx is not in intersphinx_mapping; keep typed annotations.
+    # The HTTP client inventories do not expose these configuration classes;
+    # keep the typed annotations without making the docs build fail.
     ("py:class", "httpx.Limits"),
     ("py:class", "httpx.Proxy"),
     ("py:class", "httpx.Timeout"),
+    ("py:class", "httpx2.Limits"),
+    ("py:class", "httpx2.Proxy"),
+    ("py:class", "httpx2.Timeout"),
 ]
 nitpick_ignore_regex = [
     (r"py:class", r"coderpad\._dict_types\..*"),

@@ -17,6 +17,7 @@ from coderpad._question_content import (
 from coderpad.exceptions import CoderPadError
 from coderpad.screen import SCREEN_US_BASE_URL, ScreenNamespace
 from coderpad.transports import (
+    HTTPX2Transport,
     HTTPXTransport,
     JSONTransport,
     Transport,
@@ -903,11 +904,11 @@ class CoderPad:
         self._screen_transport = screen_transport
         self._default_headers = default_headers
         self._screen: ScreenNamespace | None = None
-        if isinstance(resolved_transport, HTTPXTransport):
+        if isinstance(resolved_transport, (HTTPXTransport, HTTPX2Transport)):
             self._close = resolved_transport.close
         else:
             self._close = lambda: None
-        if isinstance(screen_transport, HTTPXTransport):
+        if isinstance(screen_transport, (HTTPXTransport, HTTPX2Transport)):
             self._screen_close = screen_transport.close
         else:
             self._screen_close = lambda: None
@@ -938,7 +939,7 @@ class CoderPad:
             )
             if self._screen_transport is None and isinstance(
                 resolved_screen_transport,
-                HTTPXTransport,
+                (HTTPXTransport, HTTPX2Transport),
             ):
                 self._screen_close = resolved_screen_transport.close
             self._screen_transport = resolved_screen_transport

@@ -18,6 +18,7 @@ html
 http
 https
 httpx
+httpx2
 io
 iterable
 json
