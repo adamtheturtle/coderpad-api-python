@@ -1,6 +1,6 @@
 """Types for the CoderPad Screen API."""
 
-from typing import ClassVar, Self, TypeGuard
+from typing import ClassVar, Self, TypeGuard, override
 
 from beartype import beartype
 from pydantic import BaseModel, ConfigDict, Field, model_validator
@@ -366,6 +366,7 @@ class ScreenTestsPage(_APIModel):
             else None,
         )
 
+    @override
     def __repr__(self) -> str:
         """Return a concise debug representation."""
         return (

@@ -422,6 +422,15 @@ class PadHistoryEntry(_APIModel):
         return "".join(updated)
 
 
+def _history_sort_key(
+    item: tuple[str, PadHistoryEntryDict],
+    /,
+) -> tuple[int, str]:
+    """Return the sort key for a Firebase history entry: timestamp, then ID."""
+    entry_id, entry = item
+    return (entry["t"], entry_id)
+
+
 @beartype
 class PadHistory(list[PadHistoryEntry]):
     """Chronologically ordered editor history for a pad file."""
@@ -442,7 +451,7 @@ class PadHistory(list[PadHistoryEntry]):
         """
         ordered_entries = sorted(
             data.items(),
-            key=lambda item: (item[1]["t"], item[0]),
+            key=_history_sort_key,
         )
         history = cls()
         for entry_id, entry in ordered_entries:

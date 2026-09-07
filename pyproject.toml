@@ -445,7 +445,7 @@ plugins = [
 [tool.pyrefly]
 search_path = [ "." ]
 errors.non-exhaustive-match = "error"
-errors.unused-ignore = "error"
+preset = "strict"
 
 [tool.pyright]
 typeCheckingMode = "strict"
