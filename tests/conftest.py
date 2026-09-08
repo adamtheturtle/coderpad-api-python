@@ -219,7 +219,7 @@ class ScreenTransportStub:
                 "method": method,
                 "url": url,
                 "headers": headers,
-                "params": params or {},
+                "params": params if params is not None else {},
                 "json": json,
             },
         )

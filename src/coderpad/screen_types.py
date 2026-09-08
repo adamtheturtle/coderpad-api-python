@@ -131,10 +131,10 @@ class ScreenInvitation(_APIModel):
     @model_validator(mode="after")
     def require_email_and_name(self) -> Self:
         """Require candidate email and name before sending."""
-        if not self.candidate_email:
+        if not bool(self.candidate_email):
             msg = "candidate_email is required"
             raise ValueError(msg)
-        if not self.candidate_name:
+        if not bool(self.candidate_name):
             msg = "candidate_name is required"
             raise ValueError(msg)
         return self
@@ -297,9 +297,10 @@ class ScreenTest(_APIModel):
         """Create a test session from an API response."""
         raw_report = _mapping(data.get("report"))
         typed_questions = _objects(data.get("questions"))
+        status = _optional_str(data.get("status"))
         return cls(
             id=_required_int(data["id"]),
-            status=_optional_str(data.get("status")) or "unknown",
+            status=status if status is not None else "unknown",
             campaign_id=_optional_int(data.get("campaign_id")),
             candidate_name=_optional_str(data.get("candidate_name")),
             candidate_email=_optional_str(data.get("candidate_email")),

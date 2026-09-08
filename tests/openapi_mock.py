@@ -43,7 +43,7 @@ def add_openapi_to_respx(
         request_body: JSONMapping = request_body_object
         response = route.return_value
         assert response is not None
-        route.mock(
+        _ = route.mock(
             side_effect=_request_validator(
                 spec=spec,
                 request_body=request_body,
@@ -100,13 +100,16 @@ def _validate_request(
     assert isinstance(content_object, dict)
     content: JSONMapping = content_object
 
-    if not request.content and not request_body.get("required", False):
+    if not bool(request.content) and not bool(
+        request_body.get("required", False)
+    ):
         return
 
-    content_type = request.headers.get(key="content-type", default="")
-    media_type = content_type.partition(";")[0].lower()
+    content_type: str = request.headers.get(key="content-type", default="")
+    media_type: str = content_type.partition(";")[0].lower()
+    display_media_type = media_type if media_type != "" else "<missing>"
     assert media_type in content, (
-        f"Unsupported content type {media_type or '<missing>'!r} for "
+        f"Unsupported content type {display_media_type!r} for "
         f"{request.method} {request.url.path}; expected one of "
         f"{sorted(content)}"
     )
@@ -139,13 +142,13 @@ def _validate_request(
     assert len(raw_required_names) == len(raw_required)
     required = schema_required_names | raw_required_names
     missing = required - fields.keys()
-    assert not missing, (
+    assert not bool(missing), (
         f"Missing required form fields for {request.method} "
         f"{request.url.path}: {sorted(missing)}"
     )
     if schema.get("additionalProperties", True) is False:
         unexpected = fields.keys() - properties.keys()
-        assert not unexpected, (
+        assert not bool(unexpected), (
             f"Unexpected form fields for {request.method} "
             f"{request.url.path}: {sorted(unexpected)}"
         )
@@ -227,11 +230,14 @@ def _form_fields(
         assert name not in fields
         payload = part.get_payload(decode=True)
         assert isinstance(payload, bytes)
+        content_charset = part.get_content_charset()
         fields[name] = (
             payload
             if part.get_filename() is not None
             else payload.decode(
-                encoding=part.get_content_charset() or "utf-8",
+                encoding=(
+                    content_charset if content_charset is not None else "utf-8"
+                ),
             )
         )
     return fields

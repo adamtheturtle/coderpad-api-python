@@ -252,7 +252,7 @@ class TestTeam:
         )
         assert team.model_dump() == {"id": "team-1", "name": "Backend"}
         with pytest.raises(expected_exception=ValidationError):
-            Team.model_validate(obj={"id": 1, "name": "Backend"})
+            _ = Team.model_validate(obj={"id": 1, "name": "Backend"})
         with (
             pytest.MonkeyPatch.context() as monkeypatch,
             pytest.raises(expected_exception=ValidationError),
@@ -306,7 +306,7 @@ class TestPad:
         del data["pad_interviewer_notifications"]
         result = Pad.from_dict(data=data)
         assert result.restrict_interviewer_access is None
-        assert not result.pad_interviewer_notifications
+        assert not bool(result.pad_interviewer_notifications)
 
 
 class TestPadInterviewerNotification:
@@ -567,7 +567,7 @@ class TestQuestion:
             "custom_database",
             "ai_assist_custom_system_prompt",
         ):
-            payload.pop(field_name)
+            _ = payload.pop(field_name)
         payload["candidate_instructions"] = [
             {"instructions": "Do the thing", "default_visible": None},
         ]
@@ -705,9 +705,12 @@ class TestOrganization:
         assert (
             result.single_sign_on_supported == data["single_sign_on_supported"]
         )
+        assert "single_sign_in_url" in data
         assert result.single_sign_in_url == data["single_sign_in_url"]
         assert len(result.teams) == len(data["teams"])
+        assert "id" in data
         assert result.id == data["id"]
+        assert "child_organizations" in data
         assert result.child_organizations == data["child_organizations"]
 
     @staticmethod
@@ -724,7 +727,7 @@ class TestOrganization:
         result = Organization.from_dict(data=data)
         assert result.single_sign_in_url is None
         assert result.id is None
-        assert not result.child_organizations
+        assert not bool(result.child_organizations)
 
 
 class TestOrganizationStats:

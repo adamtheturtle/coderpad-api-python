@@ -40,7 +40,7 @@ class _AsyncScreenTransport:
                 "method": method,
                 "url": url,
                 "headers": headers,
-                "params": params or {},
+                "params": params if params is not None else {},
                 "json": json,
             },
         )
@@ -257,5 +257,5 @@ async def test_async_empty_screen_api_key_fails_fast() -> None:
         match="Screen API key is required",
     ):
         await client.screen.campaigns.list()
-    assert not recorder.calls
+    assert not bool(recorder.calls)
     await client.aclose()

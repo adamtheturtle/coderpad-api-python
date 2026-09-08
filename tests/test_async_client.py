@@ -207,7 +207,7 @@ class TestAsyncCoderPad:
         monkeypatch.delenv(name="CODERPAD_API_KEY", raising=False)
         monkeypatch.delenv(name="CODERPAD_SCREEN_API_KEY", raising=False)
         with pytest.raises(expected_exception=KeyError):
-            AsyncCoderPad.from_env()
+            _ = AsyncCoderPad.from_env()
 
     @staticmethod
     @pytest.mark.asyncio
@@ -364,7 +364,7 @@ class TestAsyncHTTPX2Transport:
         """The transport makes a request through an HTTPX2 async
         client.
         """
-        httpx2_mock.get(url="https://api.example/items").respond(
+        _ = httpx2_mock.get(url="https://api.example/items").respond(
             status_code=HTTPStatus.OK,
             headers={"X-Family": "httpx2"},
             content=b"listed",
@@ -396,7 +396,7 @@ class TestAsyncHTTPX2Transport:
     ) -> None:
         """HTTPX2 transport exceptions propagate without conversion."""
         error = httpx2.ConnectError(message="HTTPX2 failed")
-        httpx2_mock.get(url="https://api.example/failure").mock(
+        _ = httpx2_mock.get(url="https://api.example/failure").mock(
             side_effect=error
         )
 
@@ -460,7 +460,7 @@ class TestAsyncCreatePad:
             title="Test Pad",
             language="python",
         )
-        assert result.id
+        assert bool(result.id)
 
     @staticmethod
     @pytest.mark.asyncio
@@ -474,7 +474,7 @@ class TestAsyncCreatePad:
             contents="print('hello')",
             notes="Private notes",
         )
-        assert result.id
+        assert bool(result.id)
 
     @staticmethod
     @pytest.mark.asyncio
@@ -483,7 +483,7 @@ class TestAsyncCreatePad:
     ) -> None:
         """A pad can be created with no parameters."""
         result = await async_coderpad_client.pads.create()
-        assert result.id
+        assert bool(result.id)
 
     @staticmethod
     @pytest.mark.asyncio
@@ -495,7 +495,7 @@ class TestAsyncCreatePad:
             title="Test Pad",
             language=Language.PYTHON,
         )
-        assert result.id
+        assert bool(result.id)
 
     @staticmethod
     @pytest.mark.asyncio
@@ -505,7 +505,7 @@ class TestAsyncCreatePad:
     ) -> None:
         """A pad can be spawned from an existing question id."""
         result = await async_coderpad_client.pads.create(question_id=54321)
-        assert result.id
+        assert bool(result.id)
         request = mock_coderpad_api.calls.last.request
         assert b"question_id=54321" in request.content
 
@@ -522,7 +522,7 @@ class TestAsyncGetPad:
         result = await async_coderpad_client.pads.get(
             pad_id="ABC1234",
         )
-        assert result.id
+        assert bool(result.id)
 
 
 class TestAsyncUpdatePad:
@@ -607,7 +607,7 @@ class TestAsyncGetPadEnvironment:
         result = await async_coderpad_client.pads.get_environment(
             environment_id="123",
         )
-        assert result.id
+        assert bool(result.id)
 
     @staticmethod
     @pytest.mark.asyncio
@@ -730,7 +730,7 @@ class TestAsyncGetPadHistory:
         history = await client.pads.get_history(
             history_url="https://example.com/history.json",
         )
-        assert not history
+        assert not bool(history)
 
     @staticmethod
     @pytest.mark.asyncio
@@ -805,7 +805,7 @@ class TestAsyncCreateQuestion:
             title="Test Question",
             language="python",
         )
-        assert result.id
+        assert bool(result.id)
         assert result.ai_assist_custom_system_prompt == "Only provide hints."
 
     @staticmethod
@@ -829,7 +829,7 @@ class TestAsyncCreateQuestion:
                 CandidateInstruction(instructions="Part 2"),
             ],
         )
-        assert result.id
+        assert bool(result.id)
 
     @staticmethod
     @pytest.mark.asyncio
@@ -841,7 +841,7 @@ class TestAsyncCreateQuestion:
             title="Test Question",
             language=Language.PYTHON,
         )
-        assert result.id
+        assert bool(result.id)
 
     @staticmethod
     @pytest.mark.asyncio
@@ -863,7 +863,7 @@ class TestAsyncCreateQuestion:
                 ),
             ],
         )
-        assert result.id
+        assert bool(result.id)
 
     @staticmethod
     @pytest.mark.asyncio
@@ -873,13 +873,13 @@ class TestAsyncCreateQuestion:
     ) -> None:
         """A question can be created with a zip file."""
         zip_path = tmp_path / "project.zip"
-        zip_path.write_bytes(data=b"PK\x03\x04fake-zip")
+        _ = zip_path.write_bytes(data=b"PK\x03\x04fake-zip")
         result = await async_coderpad_client.questions.create(
             title="Zip Question",
             language=Language.MULTIFILE_JAVA,
             zip_file=zip_path,
         )
-        assert result.id
+        assert bool(result.id)
 
     @staticmethod
     @pytest.mark.asyncio
@@ -920,7 +920,7 @@ class TestAsyncCreateQuestion:
     ) -> None:
         """Creating with multiple content sources raises ValueError."""
         zip_path = tmp_path / "project.zip"
-        zip_path.write_bytes(data=b"PK\x03\x04fake-zip")
+        _ = zip_path.write_bytes(data=b"PK\x03\x04fake-zip")
         with pytest.raises(
             expected_exception=ValueError,
             match="at most one of contents, file_contents, or zip_file",
@@ -954,7 +954,7 @@ class TestAsyncGetQuestion:
         result = await async_coderpad_client.questions.get(
             question_id="123",
         )
-        assert result.id
+        assert bool(result.id)
         assert result.ai_assist_custom_system_prompt == "Only provide hints."
 
 
@@ -1030,7 +1030,7 @@ class TestAsyncUpdateQuestion:
     ) -> None:
         """A question can be updated with a zip file."""
         zip_path = tmp_path / "project.zip"
-        zip_path.write_bytes(data=b"PK\x03\x04fake-zip")
+        _ = zip_path.write_bytes(data=b"PK\x03\x04fake-zip")
         await async_coderpad_client.questions.update(
             question_id="123",
             zip_file=zip_path,
@@ -1087,7 +1087,7 @@ class TestAsyncUpdateQuestion:
     ) -> None:
         """Updating with multiple content sources raises ValueError."""
         zip_path = tmp_path / "project.zip"
-        zip_path.write_bytes(data=b"PK\x03\x04fake-zip")
+        _ = zip_path.write_bytes(data=b"PK\x03\x04fake-zip")
         with pytest.raises(expected_exception=ValueError, match="at most one"):
             await async_coderpad_client.questions.update(
                 question_id="1",
@@ -1133,7 +1133,7 @@ class TestAsyncGetOrganization:
     ) -> None:
         """Organization information can be retrieved."""
         result = await async_coderpad_client.organization.get()
-        assert result.organization_name
+        assert bool(result.organization_name)
 
 
 class TestAsyncGetOrganizationStats:
@@ -1226,7 +1226,7 @@ class TestAsyncListOrganizationUsers:
     ) -> None:
         """Organization users can be listed and decoded."""
         result = await async_coderpad_client.organization.users.list()
-        assert result
+        assert bool(result)
         assert all(isinstance(item, OrganizationUser) for item in result)
 
     @staticmethod

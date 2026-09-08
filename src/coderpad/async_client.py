@@ -135,10 +135,10 @@ class AsyncPadsNamespace(_AsyncNamespace):
         )
         data = response.json()
         return PaginatedList(
-            [Pad.from_dict(data=item) for item in data["pads"]],
-            total=data["total"],
-            next_page=data.get("next_page"),
-            prev_page=data.get("prev_page"),
+            [Pad.from_dict(data=item) for item in data["pads"]],  # pyrefly: ignore [unknown-argument-type]
+            total=data["total"],  # pyrefly: ignore [unknown-argument-type]
+            next_page=data.get("next_page"),  # pyrefly: ignore [unknown-argument-type]
+            prev_page=data.get("prev_page"),  # pyrefly: ignore [unknown-argument-type]
         )
 
     async def all(
@@ -300,10 +300,10 @@ class AsyncPadsNamespace(_AsyncNamespace):
         )
         data = response.json()
         return PaginatedList(
-            [PadEvent.model_validate(obj=item) for item in data["events"]],
-            total=data["total"],
-            next_page=data.get("next_page"),
-            prev_page=data.get("prev_page"),
+            [PadEvent.model_validate(obj=item) for item in data["events"]],  # pyrefly: ignore [unknown-argument-type]
+            total=data["total"],  # pyrefly: ignore [unknown-argument-type]
+            next_page=data.get("next_page"),  # pyrefly: ignore [unknown-argument-type]
+            prev_page=data.get("prev_page"),  # pyrefly: ignore [unknown-argument-type]
         )
 
     async def get_environment(
@@ -394,10 +394,10 @@ class AsyncQuestionsNamespace(_AsyncNamespace):
         )
         data = response.json()
         return PaginatedList(
-            [Question.model_validate(obj=item) for item in data["questions"]],
-            total=data["total"],
-            next_page=data.get("next_page"),
-            prev_page=data.get("prev_page"),
+            [Question.model_validate(obj=item) for item in data["questions"]],  # pyrefly: ignore [unknown-argument-type]
+            total=data["total"],  # pyrefly: ignore [unknown-argument-type]
+            next_page=data.get("next_page"),  # pyrefly: ignore [unknown-argument-type]
+            prev_page=data.get("prev_page"),  # pyrefly: ignore [unknown-argument-type]
         )
 
     async def create(
@@ -661,10 +661,10 @@ class AsyncOrganizationPadsNamespace(_AsyncNamespace):
         )
         data = response.json()
         return PaginatedList(
-            [Pad.from_dict(data=item) for item in data["pads"]],
-            total=data["total"],
-            next_page=data.get("next_page"),
-            prev_page=data.get("prev_page"),
+            [Pad.from_dict(data=item) for item in data["pads"]],  # pyrefly: ignore [unknown-argument-type]
+            total=data["total"],  # pyrefly: ignore [unknown-argument-type]
+            next_page=data.get("next_page"),  # pyrefly: ignore [unknown-argument-type]
+            prev_page=data.get("prev_page"),  # pyrefly: ignore [unknown-argument-type]
         )
 
 
@@ -706,10 +706,10 @@ class AsyncOrganizationQuestionsNamespace(
         )
         data = response.json()
         return PaginatedList(
-            [Question.model_validate(obj=item) for item in data["questions"]],
-            total=data["total"],
-            next_page=data.get("next_page"),
-            prev_page=data.get("prev_page"),
+            [Question.model_validate(obj=item) for item in data["questions"]],  # pyrefly: ignore [unknown-argument-type]
+            total=data["total"],  # pyrefly: ignore [unknown-argument-type]
+            next_page=data.get("next_page"),  # pyrefly: ignore [unknown-argument-type]
+            prev_page=data.get("prev_page"),  # pyrefly: ignore [unknown-argument-type]
         )
 
 
@@ -741,7 +741,7 @@ class AsyncOrganizationUsersNamespace(_AsyncNamespace):
             files=None,
         )
         return [
-            OrganizationUser.model_validate(obj=item)
+            OrganizationUser.model_validate(obj=item)  # pyrefly: ignore [unknown-argument-type]
             for item in response.json()["users"]
         ]
 
@@ -895,13 +895,17 @@ class AsyncCoderPad:
         self._limits = limits
         self._proxy = proxy
         self._timeout = timeout
-        resolved_transport = transport or AsyncHTTPXTransport(
-            limits=limits,
-            proxy=proxy,
-            timeout=timeout,
+        resolved_transport = (
+            transport
+            if transport is not None
+            else AsyncHTTPXTransport(
+                limits=limits,
+                proxy=proxy,
+                timeout=timeout,
+            )
         )
         headers = {
-            **(default_headers or {}),
+            **(default_headers if default_headers is not None else {}),
             "Authorization": f'Token token="{api_key}"',
         }
         self.pads: AsyncPadsNamespace = AsyncPadsNamespace(
@@ -957,7 +961,8 @@ class AsyncCoderPad:
                 raise ValueError(msg)
             resolved_screen_transport = (
                 self._screen_transport
-                or AsyncHTTPXTransport(
+                if self._screen_transport is not None
+                else AsyncHTTPXTransport(
                     limits=self._limits,
                     proxy=self._proxy,
                     timeout=self._timeout,

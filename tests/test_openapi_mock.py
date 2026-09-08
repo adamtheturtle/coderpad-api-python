@@ -73,7 +73,7 @@ class TestOpenAPIRequestValidation:
         """A method and path must match an OpenAPI operation."""
         del mock_coderpad_api
         with pytest.raises(expected_exception=AllMockedAssertionError):
-            httpx.request(method=method, url=url)
+            _ = httpx.request(method=method, url=url)
 
     @staticmethod
     def test_rejects_unsupported_content_type(
@@ -85,7 +85,7 @@ class TestOpenAPIRequestValidation:
             expected_exception=AssertionError,
             match="Unsupported content type 'application/json'",
         ):
-            httpx.post(
+            _ = httpx.post(
                 url=_QUESTIONS_URL,
                 json={
                     "question[title]": "FizzBuzz",
@@ -103,7 +103,7 @@ class TestOpenAPIRequestValidation:
             expected_exception=AssertionError,
             match=r"Missing required form fields.*question\[language\]",
         ):
-            httpx.post(
+            _ = httpx.post(
                 url=_QUESTIONS_URL,
                 data={"question[title]": "FizzBuzz"},
             )
@@ -118,7 +118,7 @@ class TestOpenAPIRequestValidation:
             expected_exception=AssertionError,
             match=r"Unexpected form fields.*question\[titel\]",
         ):
-            httpx.post(
+            _ = httpx.post(
                 url=_QUESTIONS_URL,
                 data={
                     "question[title]": "FizzBuzz",
@@ -137,7 +137,7 @@ class TestOpenAPIRequestValidation:
             expected_exception=AssertionError,
             match=r"Invalid value for form field 'ended'",
         ):
-            httpx.put(
+            _ = httpx.put(
                 url="https://app.coderpad.io/api/pads/ABC1234",
                 data={"ended": "yes"},
             )

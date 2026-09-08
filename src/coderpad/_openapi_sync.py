@@ -17,14 +17,14 @@ def _is_object_mapping(value: object, /) -> TypeGuard[dict[object, object]]:
     return isinstance(value, dict)
 
 
-def _as_string_key_mapping(value: object, /) -> dict[str, Any] | None:
+def _as_string_key_mapping(value: object, /) -> dict[str, Any] | None:  # pyrefly: ignore [explicit-any]
     """Return a mapping when ``value`` is a JSON object."""
     if not _is_object_mapping(value):
         return None
     return {key: item for key, item in value.items() if isinstance(key, str)}
 
 
-def apply_postman_corrections(spec: dict[str, Any]) -> list[str]:
+def apply_postman_corrections(spec: dict[str, Any]) -> list[str]:  # pyrefly: ignore [explicit-any]
     """Move a misplaced ``PUT`` onto ``/api/pads/{id}``.
 
     Postman exports have historically placed the modify-pad ``PUT`` under
@@ -83,19 +83,19 @@ def run_sync(*, arguments: list[str], repo_root: Path) -> int:
             "and write it to the repository openapi.json."
         ),
     )
-    parser.add_argument(
+    _ = parser.add_argument(
         "source",
         type=Path,
         help="Path to a Postman-exported OpenAPI JSON file",
     )
-    parser.add_argument(
+    _ = parser.add_argument(
         "--target",
         type=Path,
         default=default_target,
         help=f"Output path (default: {default_target})",
     )
     args = parser.parse_args(args=arguments)
-    loaded = json.loads(s=args.source.read_text(encoding="utf-8"))
+    loaded = json.loads(s=args.source.read_text(encoding="utf-8"))  # pyrefly: ignore [unknown-argument-type]
     spec = _as_string_key_mapping(loaded)
     if spec is None:
         message = "OpenAPI document root must be a JSON object"
@@ -106,12 +106,12 @@ def run_sync(*, arguments: list[str], repo_root: Path) -> int:
         encoding="utf-8",
     )
     for note in notes:
-        sys.stderr.write(f"{note}\n")
-    if not notes:
-        sys.stderr.write("No Postman path corrections needed.\n")
-    sys.stderr.write(
+        _ = sys.stderr.write(f"{note}\n")
+    if not bool(notes):
+        _ = sys.stderr.write("No Postman path corrections needed.\n")
+    _ = sys.stderr.write(
         "Keep empirically observed response variants documented in "
         "docs/source/openapi-spec.rst and covered by fixtures.\n",
     )
-    sys.stdout.write(f"{args.target}\n")
+    _ = sys.stdout.write(f"{args.target}\n")
     return 0
