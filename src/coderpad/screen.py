@@ -40,7 +40,7 @@ class _ScreenNamespace:
         self.base_url: str = base_url.rstrip("/")
         self.api_key: str = api_key
         self.headers: dict[str, str] = {
-            **(default_headers or {}),
+            **(default_headers if default_headers is not None else {}),
             "API-Key": api_key,
         }
 
@@ -53,7 +53,7 @@ class _ScreenNamespace:
         json: object | None,
     ) -> TransportResponse:
         """Make a Screen request and map HTTP failures."""
-        if not self.api_key:
+        if not bool(self.api_key):
             msg = (
                 "Screen API key is required; pass screen_api_key when "
                 "creating the client."
@@ -218,7 +218,7 @@ class ScreenTestsNamespace(_ScreenNamespace):
 
     def cancel(self, *, test_id: int) -> None:
         """Cancel a test invitation."""
-        self._request(
+        _ = self._request(
             method="POST",
             path=f"/tests/{test_id}/actions/cancel",
             params=None,
@@ -227,7 +227,7 @@ class ScreenTestsNamespace(_ScreenNamespace):
 
     def resend(self, *, test_id: int) -> None:
         """Resend a test invitation."""
-        self._request(
+        _ = self._request(
             method="POST",
             path=f"/tests/{test_id}/actions/resend",
             params=None,
@@ -236,7 +236,7 @@ class ScreenTestsNamespace(_ScreenNamespace):
 
     def delete(self, *, test_id: int) -> None:
         """Delete a test session."""
-        self._request(
+        _ = self._request(
             method="DELETE", path=f"/tests/{test_id}", params=None, json=None
         )
 
@@ -316,11 +316,15 @@ class ScreenWebhookNamespace(_ScreenNamespace):
 
     def set(self, *, url: str) -> None:
         """Set or replace the webhook URL."""
-        self._request(method="POST", path="/webhook", json=url, params=None)
+        _ = self._request(
+            method="POST", path="/webhook", json=url, params=None
+        )
 
     def delete(self) -> None:
         """Delete the webhook configuration."""
-        self._request(method="DELETE", path="/webhook", params=None, json=None)
+        _ = self._request(
+            method="DELETE", path="/webhook", params=None, json=None
+        )
 
 
 @beartype

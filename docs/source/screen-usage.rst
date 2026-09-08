@@ -17,7 +17,7 @@ The Screen API is available on the same client via ``screen_api_key``.
        screen_api_key="your-screen-api-key",
    )
    campaigns = client.screen.campaigns.list()
-   sys.stdout.write(campaigns[0].name)
+   _ = sys.stdout.write(campaigns[0].name)
    invitation = ScreenInvitation(
        candidate_email="candidate@example.com",
        candidate_name="Ada Lovelace",
@@ -27,4 +27,4 @@ The Screen API is available on the same client via ``screen_api_key``.
        invitation=invitation,
    )
    if result.test_url is not None:
-       sys.stdout.write(result.test_url)
+       _ = sys.stdout.write(result.test_url)

@@ -34,32 +34,38 @@ def test_apply_postman_corrections_moves_put() -> None:
 
 def test_apply_postman_corrections_skips_when_paths_missing() -> None:
     """No corrections run when ``paths`` is absent or not an object."""
-    assert not apply_postman_corrections(spec={"openapi": "3.0.0"})
-    assert not apply_postman_corrections(
-        spec={"openapi": "3.0.0", "paths": []},
+    assert not bool(apply_postman_corrections(spec={"openapi": "3.0.0"}))
+    assert not bool(
+        apply_postman_corrections(
+            spec={"openapi": "3.0.0", "paths": []},
+        )
     )
 
 
 def test_apply_postman_corrections_skips_when_collection_missing() -> None:
     """No corrections run when the pads collection path is absent."""
-    assert not apply_postman_corrections(
-        spec={
-            "openapi": "3.0.0",
-            "paths": {"/api/pads/{id}": {"get": {}}},
-        },
+    assert not bool(
+        apply_postman_corrections(
+            spec={
+                "openapi": "3.0.0",
+                "paths": {"/api/pads/{id}": {"get": {}}},
+            },
+        )
     )
 
 
 def test_apply_postman_corrections_skips_when_put_absent() -> None:
     """No corrections run when the collection path has no PUT."""
-    assert not apply_postman_corrections(
-        spec={
-            "openapi": "3.0.0",
-            "paths": {
-                "/api/pads/": {"get": {}},
-                "/api/pads/{id}": {"get": {}},
+    assert not bool(
+        apply_postman_corrections(
+            spec={
+                "openapi": "3.0.0",
+                "paths": {
+                    "/api/pads/": {"get": {}},
+                    "/api/pads/{id}": {"get": {}},
+                },
             },
-        },
+        )
     )
 
 
@@ -94,7 +100,7 @@ def test_main_writes_normalized_spec(tmp_path: Path) -> None:
     """The sync entry point writes a corrected OpenAPI document."""
     source = tmp_path / "export.json"
     target = tmp_path / "openapi.json"
-    source.write_text(
+    _ = source.write_text(
         data=json.dumps(
             obj={
                 "openapi": "3.0.0",
@@ -122,7 +128,7 @@ def test_main_reports_when_no_corrections_needed(
     """The sync entry point reports when no path corrections apply."""
     source = tmp_path / "export.json"
     target = tmp_path / "openapi.json"
-    source.write_text(
+    _ = source.write_text(
         data=json.dumps(
             obj={
                 "openapi": "3.0.0",
@@ -146,9 +152,9 @@ def test_main_reports_when_no_corrections_needed(
 def test_main_rejects_non_object_root(tmp_path: Path) -> None:
     """A non-object OpenAPI root fails fast."""
     source = tmp_path / "export.json"
-    source.write_text(data="[]", encoding="utf-8")
+    _ = source.write_text(data="[]", encoding="utf-8")
     with pytest.raises(expected_exception=SystemExit):
-        run_sync(
+        _ = run_sync(
             arguments=[
                 str(object=source),
                 "--target",

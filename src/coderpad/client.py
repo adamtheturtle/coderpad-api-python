@@ -134,10 +134,10 @@ class PadsNamespace(_Namespace):
         )
         data = response.json()
         return PaginatedList(
-            [Pad.from_dict(data=item) for item in data["pads"]],
-            total=data["total"],
-            next_page=data.get("next_page"),
-            prev_page=data.get("prev_page"),
+            [Pad.from_dict(data=item) for item in data["pads"]],  # pyrefly: ignore [unknown-argument-type]
+            total=data["total"],  # pyrefly: ignore [unknown-argument-type]
+            next_page=data.get("next_page"),  # pyrefly: ignore [unknown-argument-type]
+            prev_page=data.get("prev_page"),  # pyrefly: ignore [unknown-argument-type]
         )
 
     def all(
@@ -258,7 +258,7 @@ class PadsNamespace(_Namespace):
             data["ended"] = "true" if ended else "false"
         if deleted is not None:
             data["deleted"] = "true" if deleted else "false"
-        self._request(
+        _ = self._request(
             method="PUT",
             url=f"/api/pads/{pad_id}",
             data=data,
@@ -297,10 +297,10 @@ class PadsNamespace(_Namespace):
         )
         data = response.json()
         return PaginatedList(
-            [PadEvent.model_validate(obj=item) for item in data["events"]],
-            total=data["total"],
-            next_page=data.get("next_page"),
-            prev_page=data.get("prev_page"),
+            [PadEvent.model_validate(obj=item) for item in data["events"]],  # pyrefly: ignore [unknown-argument-type]
+            total=data["total"],  # pyrefly: ignore [unknown-argument-type]
+            next_page=data.get("next_page"),  # pyrefly: ignore [unknown-argument-type]
+            prev_page=data.get("prev_page"),  # pyrefly: ignore [unknown-argument-type]
         )
 
     def get_environment(
@@ -390,10 +390,10 @@ class QuestionsNamespace(_Namespace):
         )
         data = response.json()
         return PaginatedList(
-            [Question.model_validate(obj=item) for item in data["questions"]],
-            total=data["total"],
-            next_page=data.get("next_page"),
-            prev_page=data.get("prev_page"),
+            [Question.model_validate(obj=item) for item in data["questions"]],  # pyrefly: ignore [unknown-argument-type]
+            total=data["total"],  # pyrefly: ignore [unknown-argument-type]
+            next_page=data.get("next_page"),  # pyrefly: ignore [unknown-argument-type]
+            prev_page=data.get("prev_page"),  # pyrefly: ignore [unknown-argument-type]
         )
 
     def create(
@@ -596,7 +596,7 @@ class QuestionsNamespace(_Namespace):
                     "application/zip",
                 ),
             }
-        self._request(
+        _ = self._request(
             method="PUT",
             url=f"/api/questions/{question_id}",
             data=data,
@@ -614,7 +614,7 @@ class QuestionsNamespace(_Namespace):
         Args:
             question_id: The id of the question.
         """
-        self._request(
+        _ = self._request(
             method="DELETE",
             url=f"/api/questions/{question_id}",
             params=None,
@@ -656,10 +656,10 @@ class OrganizationPadsNamespace(_Namespace):
         )
         data = response.json()
         return PaginatedList(
-            [Pad.from_dict(data=item) for item in data["pads"]],
-            total=data["total"],
-            next_page=data.get("next_page"),
-            prev_page=data.get("prev_page"),
+            [Pad.from_dict(data=item) for item in data["pads"]],  # pyrefly: ignore [unknown-argument-type]
+            total=data["total"],  # pyrefly: ignore [unknown-argument-type]
+            next_page=data.get("next_page"),  # pyrefly: ignore [unknown-argument-type]
+            prev_page=data.get("prev_page"),  # pyrefly: ignore [unknown-argument-type]
         )
 
 
@@ -696,10 +696,10 @@ class OrganizationQuestionsNamespace(_Namespace):
         )
         data = response.json()
         return PaginatedList(
-            [Question.model_validate(obj=item) for item in data["questions"]],
-            total=data["total"],
-            next_page=data.get("next_page"),
-            prev_page=data.get("prev_page"),
+            [Question.model_validate(obj=item) for item in data["questions"]],  # pyrefly: ignore [unknown-argument-type]
+            total=data["total"],  # pyrefly: ignore [unknown-argument-type]
+            next_page=data.get("next_page"),  # pyrefly: ignore [unknown-argument-type]
+            prev_page=data.get("prev_page"),  # pyrefly: ignore [unknown-argument-type]
         )
 
 
@@ -731,7 +731,7 @@ class OrganizationUsersNamespace(_Namespace):
             files=None,
         )
         return [
-            OrganizationUser.model_validate(obj=item)
+            OrganizationUser.model_validate(obj=item)  # pyrefly: ignore [unknown-argument-type]
             for item in response.json()["users"]
         ]
 
@@ -880,13 +880,17 @@ class CoderPad:
         self._limits = limits
         self._proxy = proxy
         self._timeout = timeout
-        resolved_transport = transport or HTTPXTransport(
-            limits=limits,
-            proxy=proxy,
-            timeout=timeout,
+        resolved_transport = (
+            transport
+            if transport is not None
+            else HTTPXTransport(
+                limits=limits,
+                proxy=proxy,
+                timeout=timeout,
+            )
         )
         headers = {
-            **(default_headers or {}),
+            **(default_headers if default_headers is not None else {}),
             "Authorization": f'Token token="{api_key}"',
         }
         self.pads: PadsNamespace = PadsNamespace(
@@ -931,7 +935,8 @@ class CoderPad:
                 raise ValueError(msg)
             resolved_screen_transport = (
                 self._screen_transport
-                or HTTPXTransport(
+                if self._screen_transport is not None
+                else HTTPXTransport(
                     limits=self._limits,
                     proxy=self._proxy,
                     timeout=self._timeout,

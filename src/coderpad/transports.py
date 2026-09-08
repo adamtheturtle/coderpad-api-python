@@ -58,7 +58,7 @@ class TransportResponse:
     headers: dict[str, str]
     content: bytes
 
-    def json(self) -> Any:  # noqa: ANN401
+    def json(self) -> Any:  # noqa: ANN401  # pyrefly: ignore [explicit-any]
         """Parse the response body as JSON.
 
         Returns:

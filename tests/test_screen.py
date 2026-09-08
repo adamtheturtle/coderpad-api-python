@@ -63,8 +63,10 @@ def test_campaigns_and_invitation(
 def test_required_integer_fields_are_validated() -> None:
     """Required integer fields reject malformed API values."""
     with pytest.raises(expected_exception=TypeError):
-        ScreenCampaign.from_dict(data={"id": "not-an-integer", "name": "Bad"})
-    assert not ScreenCampaign(id=1, name="Empty").languages
+        _ = ScreenCampaign.from_dict(
+            data={"id": "not-an-integer", "name": "Bad"}
+        )
+    assert not bool(ScreenCampaign(id=1, name="Empty").languages)
     assert ScreenTest.from_dict(data={"id": 1}).report is None
 
 
@@ -102,7 +104,7 @@ def test_tests_filters_pagination_and_decoding(
     assert page.tests[0].report is not None
     screen_report = page.tests[0].report
     assert screen_report.duration is None
-    assert not screen_report.warnings
+    assert not bool(screen_report.warnings)
     assert screen_report.points is None
     assert screen_report.score == 90
     assert screen_report.total_duration is None
@@ -172,13 +174,13 @@ def test_report_json_raises_when_no_report() -> None:
         expected_exception=LookupError,
         match="Screen test 99 has no scored report",
     ):
-        screen.tests.report_json(test_id=99)
+        _ = screen.tests.report_json(test_id=99)
 
 
 def test_screen_errors_use_existing_hierarchy() -> None:
     """Screen HTTP failures map to the shared exception hierarchy."""
     with pytest.raises(expected_exception=AuthenticationError):
-        _client(
+        _ = _client(
             ScreenTransportStub(error=True), base_url=SCREEN_EU_BASE_URL
         ).screen.campaigns.list()
 
@@ -199,12 +201,12 @@ def test_invitation_requires_email_and_name() -> None:
         expected_exception=ValidationError,
         match="candidate_email",
     ):
-        ScreenInvitation(candidate_name="Ada")
+        _ = ScreenInvitation(candidate_name="Ada")
     with pytest.raises(
         expected_exception=ValidationError,
         match="candidate_name",
     ):
-        ScreenInvitation(candidate_email="ada@example.com")
+        _ = ScreenInvitation(candidate_email="ada@example.com")
 
 
 def test_empty_screen_api_key_fails_fast() -> None:
@@ -220,6 +222,6 @@ def test_empty_screen_api_key_fails_fast() -> None:
         expected_exception=ValueError,
         match="Screen API key is required",
     ):
-        client.screen.campaigns.list()
-    assert not transport.calls
+        _ = client.screen.campaigns.list()
+    assert not bool(transport.calls)
     client.close()

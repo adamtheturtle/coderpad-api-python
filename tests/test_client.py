@@ -205,7 +205,7 @@ class TestCoderPad:
         monkeypatch.delenv(name="CODERPAD_API_KEY", raising=False)
         monkeypatch.delenv(name="CODERPAD_SCREEN_API_KEY", raising=False)
         with pytest.raises(expected_exception=KeyError):
-            CoderPad.from_env()
+            _ = CoderPad.from_env()
 
     @staticmethod
     def test_screen_lazy_requires_api_key() -> None:
@@ -343,7 +343,7 @@ class TestHTTPX2Transport:
     @staticmethod
     def test_real_httpx2_request(httpx2_mock: respx.Router) -> None:
         """The transport makes a request through an HTTPX2 client."""
-        httpx2_mock.post(url="https://api.example/items").respond(
+        _ = httpx2_mock.post(url="https://api.example/items").respond(
             status_code=HTTPStatus.CREATED,
             headers={"X-Family": "httpx2"},
             content=b"created",
@@ -373,7 +373,7 @@ class TestHTTPX2Transport:
     def test_httpx2_exception_family(httpx2_mock: respx.Router) -> None:
         """HTTPX2 transport exceptions propagate without conversion."""
         error = httpx2.ConnectError(message="HTTPX2 failed")
-        httpx2_mock.get(url="https://api.example/failure").mock(
+        _ = httpx2_mock.get(url="https://api.example/failure").mock(
             side_effect=error
         )
 
@@ -381,7 +381,7 @@ class TestHTTPX2Transport:
             HTTPX2Transport() as transport,
             pytest.raises(expected_exception=httpx2.ConnectError),
         ):
-            transport(
+            _ = transport(
                 method="GET",
                 url="https://api.example/failure",
                 headers={},
@@ -700,7 +700,7 @@ class TestExceptionHierarchy:
             transport=_error_transport,
         )
         with pytest.raises(expected_exception=NotFoundError):
-            client.pads.get(pad_id="nonexistent")
+            _ = client.pads.get(pad_id="nonexistent")
 
 
 class TestListPads:
@@ -785,7 +785,7 @@ class TestCreatePad:
             title="Test Pad",
             language="python",
         )
-        assert result.id
+        assert bool(result.id)
 
     @staticmethod
     def test_create_pad_all_params(
@@ -798,7 +798,7 @@ class TestCreatePad:
             contents="print('hello')",
             notes="Private notes",
         )
-        assert result.id
+        assert bool(result.id)
 
     @staticmethod
     def test_create_pad_minimal(
@@ -806,7 +806,7 @@ class TestCreatePad:
     ) -> None:
         """A pad can be created with no parameters."""
         result = coderpad_client.pads.create()
-        assert result.id
+        assert bool(result.id)
 
     @staticmethod
     def test_create_pad_with_language_enum(
@@ -817,7 +817,7 @@ class TestCreatePad:
             title="Test Pad",
             language=Language.PYTHON,
         )
-        assert result.id
+        assert bool(result.id)
 
     @staticmethod
     def test_create_pad_from_question(
@@ -826,7 +826,7 @@ class TestCreatePad:
     ) -> None:
         """A pad can be spawned from an existing question id."""
         result = coderpad_client.pads.create(question_id=54321)
-        assert result.id
+        assert bool(result.id)
         request = mock_coderpad_api.calls.last.request
         assert b"question_id=54321" in request.content
 
@@ -842,7 +842,7 @@ class TestGetPad:
         result = coderpad_client.pads.get(
             pad_id="ABC1234",
         )
-        assert result.id
+        assert bool(result.id)
 
 
 class TestUpdatePad:
@@ -921,7 +921,7 @@ class TestGetPadEnvironment:
         result = coderpad_client.pads.get_environment(
             environment_id="123",
         )
-        assert result.id
+        assert bool(result.id)
 
     @staticmethod
     def test_live_response_variants(
@@ -1038,7 +1038,7 @@ class TestGetPadHistory:
         history = client.pads.get_history(
             history_url="https://example.com/history.json",
         )
-        assert not history
+        assert not bool(history)
 
     @staticmethod
     def test_get_history_error() -> None:
@@ -1066,7 +1066,7 @@ class TestGetPadHistory:
             transport=_error_transport,
         )
         with pytest.raises(expected_exception=NotFoundError):
-            client.pads.get_history(
+            _ = client.pads.get_history(
                 history_url="https://example.com/history.json",
             )
 
@@ -1109,7 +1109,7 @@ class TestCreateQuestion:
             title="Test Question",
             language="python",
         )
-        assert result.id
+        assert bool(result.id)
         assert result.ai_assist_custom_system_prompt == "Only provide hints."
 
     @staticmethod
@@ -1132,7 +1132,7 @@ class TestCreateQuestion:
                 CandidateInstruction(instructions="Part 2"),
             ],
         )
-        assert result.id
+        assert bool(result.id)
 
     @staticmethod
     def test_create_question_with_language_enum(
@@ -1143,7 +1143,7 @@ class TestCreateQuestion:
             title="Test Question",
             language=Language.PYTHON,
         )
-        assert result.id
+        assert bool(result.id)
 
     @staticmethod
     def test_create_question_with_file_contents(
@@ -1164,7 +1164,7 @@ class TestCreateQuestion:
                 ),
             ],
         )
-        assert result.id
+        assert bool(result.id)
 
     @staticmethod
     def test_create_question_with_zip_file(
@@ -1173,13 +1173,13 @@ class TestCreateQuestion:
     ) -> None:
         """A question can be created with a zip file."""
         zip_path = tmp_path / "project.zip"
-        zip_path.write_bytes(data=b"PK\x03\x04fake-zip")
+        _ = zip_path.write_bytes(data=b"PK\x03\x04fake-zip")
         result = coderpad_client.questions.create(
             title="Zip Question",
             language=Language.MULTIFILE_JAVA,
             zip_file=zip_path,
         )
-        assert result.id
+        assert bool(result.id)
 
     @staticmethod
     def test_create_question_candidate_instructions_body(
@@ -1187,7 +1187,7 @@ class TestCreateQuestion:
         mock_coderpad_api: respx.MockRouter,
     ) -> None:
         """Candidate instructions are serialized into the form body."""
-        coderpad_client.questions.create(
+        _ = coderpad_client.questions.create(
             title="Live Question",
             language="python",
             ai_assist_custom_system_prompt="Only provide hints.",
@@ -1218,12 +1218,12 @@ class TestCreateQuestion:
     ) -> None:
         """Creating with multiple content sources raises ValueError."""
         zip_path = tmp_path / "project.zip"
-        zip_path.write_bytes(data=b"PK\x03\x04fake-zip")
+        _ = zip_path.write_bytes(data=b"PK\x03\x04fake-zip")
         with pytest.raises(
             expected_exception=ValueError,
             match="at most one of contents, file_contents, or zip_file",
         ):
-            coderpad_client.questions.create(
+            _ = coderpad_client.questions.create(
                 title="Conflict",
                 language="python",
                 contents="print(1)",
@@ -1232,7 +1232,7 @@ class TestCreateQuestion:
                 ],
             )
         with pytest.raises(expected_exception=ValueError, match="zip_file"):
-            coderpad_client.questions.create(
+            _ = coderpad_client.questions.create(
                 title="Conflict",
                 language="python",
                 contents="print(1)",
@@ -1251,7 +1251,7 @@ class TestGetQuestion:
         result = coderpad_client.questions.get(
             question_id="123",
         )
-        assert result.id
+        assert bool(result.id)
         assert result.ai_assist_custom_system_prompt == "Only provide hints."
 
 
@@ -1322,7 +1322,7 @@ class TestUpdateQuestion:
     ) -> None:
         """A question can be updated with a zip file."""
         zip_path = tmp_path / "project.zip"
-        zip_path.write_bytes(data=b"PK\x03\x04fake-zip")
+        _ = zip_path.write_bytes(data=b"PK\x03\x04fake-zip")
         coderpad_client.questions.update(
             question_id="123",
             zip_file=zip_path,
@@ -1376,7 +1376,7 @@ class TestUpdateQuestion:
     ) -> None:
         """Updating with multiple content sources raises ValueError."""
         zip_path = tmp_path / "project.zip"
-        zip_path.write_bytes(data=b"PK\x03\x04fake-zip")
+        _ = zip_path.write_bytes(data=b"PK\x03\x04fake-zip")
         with pytest.raises(expected_exception=ValueError, match="at most one"):
             coderpad_client.questions.update(
                 question_id="1",
@@ -1419,7 +1419,7 @@ class TestGetOrganization:
     ) -> None:
         """Organization information can be retrieved."""
         result = coderpad_client.organization.get()
-        assert result.organization_name
+        assert bool(result.organization_name)
 
 
 class TestGetOrganizationStats:
@@ -1505,7 +1505,7 @@ class TestListOrganizationUsers:
     ) -> None:
         """Organization users can be listed and decoded."""
         result = coderpad_client.organization.users.list()
-        assert result
+        assert bool(result)
         assert all(isinstance(item, OrganizationUser) for item in result)
 
     @staticmethod
@@ -1571,7 +1571,7 @@ class TestListOrganizationUsers:
 
         client = CoderPad(api_key="test-key", transport=_error_transport)
         with pytest.raises(expected_exception=NotFoundError):
-            client.organization.users.list()
+            _ = client.organization.users.list()
 
 
 class TestPadsAll:

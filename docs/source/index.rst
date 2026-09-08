@@ -23,11 +23,11 @@ Usage
 
    client = CoderPad(api_key="your-api-key")
    pad = client.pads.create(title="Interview", language="python")
-   sys.stdout.write(pad.title)
+   _ = sys.stdout.write(pad.title)
    for listed_pad in client.pads.list():
-       sys.stdout.write(listed_pad.title)
+       _ = sys.stdout.write(listed_pad.title)
    org = client.organization.get()
-   sys.stdout.write(org.organization_name)
+   _ = sys.stdout.write(org.organization_name)
 
 HTTPX2 transports
 -----------------
@@ -49,7 +49,7 @@ HTTPX2 transport explicitly and pass it to the client. The standard
 
    transport = HTTPX2Transport(timeout=httpx2.Timeout(timeout=10))
    with CoderPad(api_key="your-api-key", transport=transport) as client:
-       sys.stdout.write(client.base_url)
+       _ = sys.stdout.write(client.base_url)
 
 Use ``AsyncHTTPX2Transport`` with ``AsyncCoderPad`` for asynchronous calls.
 The ``limits``, ``proxy`` and ``timeout`` arguments passed to these transports
