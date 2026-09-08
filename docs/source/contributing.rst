@@ -70,16 +70,12 @@ Run the following commands to build and view documentation locally:
 Undocumented API variants
 ~~~~~~~~~~~~~~~~~~~~~~~~~
 
-CoderPad responses sometimes include fields that are missing from the
-published OpenAPI specification. When you extend the client to support a
-new empirically observed variant, update all of the following:
+CoderPad responses sometimes include fields that are missing from the published OpenAPI specification.
+When you extend the client to support a new empirically observed variant, update all of the following:
 
-#. Add a ``newsfragments/<issue>.change.rst`` entry describing the
-   user-visible behavior (see :doc:`release-process`).
-#. Extend the bullet list in :doc:`openapi-spec` under empirically
-   observed response fields.
-#. Add or extend **synthetic** fixtures and tests so the variant is
-   covered without storing account-specific payloads in the repository.
+#. Add a ``newsfragments/<issue>.change.rst`` entry describing the user-visible behavior (see :doc:`release-process`).
+#. Extend the bullet list in :doc:`openapi-spec` under empirically observed response fields.
+#. Add or extend **synthetic** fixtures and tests so the variant is covered without storing account-specific payloads in the repository.
 
 Continuous integration
 ----------------------

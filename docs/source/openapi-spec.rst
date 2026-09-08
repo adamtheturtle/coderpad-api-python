@@ -23,34 +23,28 @@ To refresh ``openapi.json``:
 
       $ python scripts/sync_openapi.py /path/to/postman-export.json
 
-   The script applies the known Postman path correction above and writes
-   ``openapi.json`` at the repository root.
-#. Keep the empirically observed response fields below in sync with any
-   new live variants, and extend the synthetic fixtures that cover them.
+   The script applies the known Postman path correction above and writes ``openapi.json`` at the repository root.
+#. Keep the empirically observed response fields below in sync with any new live variants, and extend the synthetic fixtures that cover them.
 
 Empirically observed response fields
 ------------------------------------
 
-CoderPad responses can include fields that are not currently described by
-the published specification. The client preserves the following structures
-observed in live API responses:
+CoderPad responses can include fields that are not currently described by the published specification.
+The client preserves the following structures observed in live API responses:
 
 * binary pad-environment files, whose ``contents`` value is ``null``;
 * pad interviewer-access restrictions and interviewer notifications;
 * question custom databases and their structured table definitions; and
 * organization identifiers and raw child-organization mappings.
 
-The organization SSO sign-in URL is also conditional and may be omitted when
-single sign-on is not supported. These extensions are covered by synthetic
-fixtures so that no account-specific response data is stored in the project.
+The organization SSO sign-in URL is also conditional and may be omitted when single sign-on is not supported.
+These extensions are covered by synthetic fixtures so that no account-specific response data is stored in the project.
 
 Changelog and review process
 ----------------------------
 
-When a maintainer adds support for a new undocumented response or request
-shape, the pull request should include:
+When a maintainer adds support for a new undocumented response or request shape, the pull request should include:
 
-* a towncrier news fragment describing the user-visible parsing or typing
-  change;
+* a towncrier news fragment describing the user-visible parsing or typing change;
 * an update to the empirically observed response fields list above; and
 * synthetic regression tests (see :doc:`contributing`).

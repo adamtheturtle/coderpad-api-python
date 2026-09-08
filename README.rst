@@ -46,15 +46,14 @@ The organization users endpoint also supports server-side email filtering:
    client = CoderPad(api_key="your-api-key")
    users = client.organization.users.list(email="person@example.com")
 
-The equivalent asynchronous operation is
-``await client.organization.users.list(email="person@example.com")``.
+The equivalent asynchronous operation is ``await client.organization.users.list(email="person@example.com")``.
 
 HTTPX2 transports
 -----------------
 
-HTTPX remains the default client family. To opt in to HTTPX2, construct the
-HTTPX2 transport explicitly and pass it to the client. The standard
-``coderpad-py`` installation includes both client families.
+HTTPX remains the default client family.
+To opt in to HTTPX2, construct the HTTPX2 transport explicitly and pass it to the client.
+The standard ``coderpad-py`` installation includes both client families.
 
 .. code-block:: python
 
@@ -72,14 +71,13 @@ HTTPX2 transport explicitly and pass it to the client. The standard
        _ = sys.stdout.write(client.base_url)
 
 Use ``AsyncHTTPX2Transport`` with ``AsyncCoderPad`` for asynchronous calls.
-The ``limits``, ``proxy`` and ``timeout`` arguments passed to these transports
-accept HTTPX2 configuration objects. Do not pass equivalent ``httpx`` objects
-across the package boundary. If the Screen API should also use HTTPX2, pass a
-separate HTTPX2 transport as ``screen_transport``.
+The ``limits``, ``proxy`` and ``timeout`` arguments passed to these transports accept HTTPX2 configuration objects.
+Do not pass equivalent ``httpx`` objects across the package boundary.
+If the Screen API should also use HTTPX2, pass a separate HTTPX2 transport as ``screen_transport``.
 
-Existing HTTPX users do not need to change anything. Migrating to HTTPX2 only
-requires selecting the new transport; the CoderPad client methods and returned
-models are unchanged.
+Existing HTTPX users do not need to change anything.
+Migrating to HTTPX2 only requires selecting the new transport.
+The CoderPad client methods and returned models are unchanged.
 
 CoderPad Screen
 ---------------
@@ -100,19 +98,18 @@ Screen uses a separate API key and host from Interview:
    page = client.screen.tests.list(campaign_id=campaigns[0].id, limit=50)
    assert page.pagination is not None
 
-Screen test listings use offset pagination. While
-``page.pagination.has_more_items`` is true, request the next page with
-``start=page.pagination.next_start``. Use ``SCREEN_EU_BASE_URL`` as
-``screen_base_url`` for EU-hosted organizations. All Screen operations have
-equivalent methods on ``AsyncCoderPad``.
+Screen test listings use offset pagination.
+While ``page.pagination.has_more_items`` is true, request the next page with ``start=page.pagination.next_start``.
+Use ``SCREEN_EU_BASE_URL`` as ``screen_base_url`` for EU-hosted organizations.
+All Screen operations have equivalent methods on ``AsyncCoderPad``.
 
 
 Environment variables
 ---------------------
 
-Set ``CODERPAD_API_KEY`` for the Interview API. Optionally set
-``CODERPAD_SCREEN_API_KEY`` for Screen. Then construct a client with
-``CoderPad.from_env()`` or ``AsyncCoderPad.from_env()``:
+Set ``CODERPAD_API_KEY`` for the Interview API.
+Optionally set ``CODERPAD_SCREEN_API_KEY`` for Screen.
+Then construct a client with ``CoderPad.from_env()`` or ``AsyncCoderPad.from_env()``:
 
 .. code-block:: python
 

@@ -1,15 +1,11 @@
 Writable and read-only fields
 =============================
 
-The :class:`~coderpad.types.Question` and :class:`~coderpad.types.Pad`
-models expose more fields than the ``create`` and ``update`` methods
-accept.  A field that is present when you read a resource is not
-necessarily a field that you can write.
+The :class:`~coderpad.types.Question` and :class:`~coderpad.types.Pad` models expose more fields than the ``create`` and ``update`` methods accept.
+A field that is present when you read a resource is not necessarily a field that you can write.
 
-This page documents which fields are writable so that the gap is
-explicit.  It is especially relevant when syncing resources from
-source control, where a read field that cannot be written is
-surprising.
+This page documents which fields are writable so that the gap is explicit.
+It is especially relevant when syncing resources from source control, where a read field that cannot be written is surprising.
 
 Questions
 ---------
