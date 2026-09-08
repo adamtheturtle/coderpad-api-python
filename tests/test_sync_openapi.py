@@ -29,7 +29,7 @@ def test_apply_postman_corrections_moves_put() -> None:
     pad_item = paths["/api/pads/{id}"]
     put_operation = pad_item["put"]
     assert isinstance(put_operation, dict)
-    assert put_operation["summary"] == "modify"
+    assert put_operation["summary"] == "modify"  # ty: ignore[invalid-argument-type]
 
 
 def test_apply_postman_corrections_skips_when_paths_missing() -> None:

@@ -49,6 +49,7 @@ str
 subclasses
 todo
 txt
+ty
 unmapped
 url
 webhook
