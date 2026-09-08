@@ -1,6 +1,5 @@
 """Setup for Sybil."""
 
-import json
 import os
 from collections.abc import Generator
 from doctest import ELLIPSIS
@@ -14,7 +13,10 @@ from sybil.parsers.rest import (
     PythonCodeBlockParser,
 )
 
-from tests.openapi_mock import JSONMapping, add_openapi_to_respx
+from tests.openapi_mock import (
+    add_openapi_to_respx,
+    parse_json_mapping,
+)
 
 _BASE_URL = "https://app.coderpad.io"
 
@@ -26,7 +28,7 @@ def fixture_mock_coderpad_api(
     """Provide a respx mock router backed by the OpenAPI spec."""
     openapi_spec_path = request.config.rootpath / "openapi.json"
     spec_text = openapi_spec_path.read_text(encoding="utf-8")
-    openapi_spec: JSONMapping = json.loads(s=spec_text)  # ty: ignore[unsound-assignment]
+    openapi_spec = parse_json_mapping(text=spec_text)
     _ = os.environ.setdefault(key="CODERPAD_API_KEY", value="test-key")
     _ = os.environ.setdefault(
         key="CODERPAD_SCREEN_API_KEY", value="screen-key"

@@ -1,5 +1,6 @@
 """OpenAPI-backed RESPX routes with request validation."""
 
+import json
 from collections.abc import Callable, Iterator
 from email import policy
 from email.parser import BytesParser
@@ -17,6 +18,11 @@ type JSONValue = (
     bool | int | float | str | list[JSONValue] | dict[str, JSONValue] | None
 )
 type JSONMapping = dict[str, JSONValue]
+
+
+def parse_json_mapping(*, text: str) -> JSONMapping:
+    """Parse a JSON document whose root is an object."""
+    return dict[str, JSONValue](json.loads(s=text))
 
 
 def add_openapi_to_respx(
@@ -105,7 +111,12 @@ def _validate_request(
     ):
         return
 
-    content_type: str = request.headers.get(key="content-type", default="")  # ty: ignore[unsound-assignment]
+    content_type_value: object = request.headers.get(
+        key="content-type",
+        default="",
+    )
+    assert isinstance(content_type_value, str)
+    content_type = content_type_value
     media_type: str = content_type.partition(";")[0].lower()
     display_media_type = media_type if media_type != "" else "<missing>"
     assert media_type in content, (
