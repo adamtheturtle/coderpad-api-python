@@ -117,7 +117,7 @@ def fixture_openapi_spec(request: pytest.FixtureRequest) -> JSONMapping:
     """Load the OpenAPI spec from the repo."""
     openapi_spec_path = request.config.rootpath / "openapi.json"
     spec_text = openapi_spec_path.read_text(encoding="utf-8")
-    result: JSONMapping = json_module.loads(s=spec_text)
+    result: JSONMapping = json_module.loads(s=spec_text)  # ty: ignore[unsound-assignment]
     return result
 
 

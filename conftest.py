@@ -26,7 +26,7 @@ def fixture_mock_coderpad_api(
     """Provide a respx mock router backed by the OpenAPI spec."""
     openapi_spec_path = request.config.rootpath / "openapi.json"
     spec_text = openapi_spec_path.read_text(encoding="utf-8")
-    openapi_spec: JSONMapping = json.loads(s=spec_text)
+    openapi_spec: JSONMapping = json.loads(s=spec_text)  # ty: ignore[unsound-assignment]
     _ = os.environ.setdefault(key="CODERPAD_API_KEY", value="test-key")
     _ = os.environ.setdefault(
         key="CODERPAD_SCREEN_API_KEY", value="screen-key"

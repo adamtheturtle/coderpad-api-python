@@ -105,7 +105,7 @@ def _validate_request(
     ):
         return
 
-    content_type: str = request.headers.get(key="content-type", default="")
+    content_type: str = request.headers.get(key="content-type", default="")  # ty: ignore[unsound-assignment]
     media_type: str = content_type.partition(";")[0].lower()
     display_media_type = media_type if media_type != "" else "<missing>"
     assert media_type in content, (
