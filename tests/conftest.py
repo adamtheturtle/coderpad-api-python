@@ -10,7 +10,11 @@ import respx
 from coderpad.async_client import AsyncCoderPad
 from coderpad.client import CoderPad
 from coderpad.transports import TransportResponse
-from tests.openapi_mock import JSONMapping, add_openapi_to_respx
+from tests.openapi_mock import (
+    JSONMapping,
+    add_openapi_to_respx,
+    parse_json_mapping,
+)
 
 _BASE_URL = "https://app.coderpad.io"
 _LIVE_VARIANT_ORGANIZATION_ID = 42
@@ -117,8 +121,7 @@ def fixture_openapi_spec(request: pytest.FixtureRequest) -> JSONMapping:
     """Load the OpenAPI spec from the repo."""
     openapi_spec_path = request.config.rootpath / "openapi.json"
     spec_text = openapi_spec_path.read_text(encoding="utf-8")
-    result: JSONMapping = json_module.loads(s=spec_text)  # ty: ignore[unsound-assignment]
-    return result
+    return parse_json_mapping(text=spec_text)
 
 
 @pytest.fixture(name="mock_coderpad_api")

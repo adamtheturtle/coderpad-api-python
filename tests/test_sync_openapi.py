@@ -10,7 +10,7 @@ from coderpad._openapi_sync import apply_postman_corrections, run_sync
 
 def test_apply_postman_corrections_moves_put() -> None:
     """A PUT under ``/api/pads/`` is moved to ``/api/pads/{id}``."""
-    paths: dict[str, dict[str, object]] = {
+    paths: dict[str, dict[str, dict[str, str]]] = {
         "/api/pads/": {
             "get": {"summary": "list"},
             "put": {"summary": "modify"},
@@ -28,8 +28,7 @@ def test_apply_postman_corrections_moves_put() -> None:
     assert "put" not in paths["/api/pads/"]
     pad_item = paths["/api/pads/{id}"]
     put_operation = pad_item["put"]
-    assert isinstance(put_operation, dict)
-    assert put_operation["summary"] == "modify"  # ty: ignore[invalid-argument-type]
+    assert put_operation.get("summary") == "modify"
 
 
 def test_apply_postman_corrections_skips_when_paths_missing() -> None:
