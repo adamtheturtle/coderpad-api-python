@@ -32,9 +32,9 @@ Usage
 HTTPX2 transports
 -----------------
 
-HTTPX remains the default client family. To opt in to HTTPX2, construct the
-HTTPX2 transport explicitly and pass it to the client. The standard
-``coderpad-py`` installation includes both client families.
+HTTPX remains the default client family.
+To opt in to HTTPX2, construct the HTTPX2 transport explicitly and pass it to the client.
+The standard ``coderpad-py`` installation includes both client families.
 
 .. code-block:: python
 
@@ -52,14 +52,13 @@ HTTPX2 transport explicitly and pass it to the client. The standard
        _ = sys.stdout.write(client.base_url)
 
 Use ``AsyncHTTPX2Transport`` with ``AsyncCoderPad`` for asynchronous calls.
-The ``limits``, ``proxy`` and ``timeout`` arguments passed to these transports
-accept HTTPX2 configuration objects. Do not pass equivalent ``httpx`` objects
-across the package boundary. If the Screen API should also use HTTPX2, pass a
-separate HTTPX2 transport as ``screen_transport``.
+The ``limits``, ``proxy`` and ``timeout`` arguments passed to these transports accept HTTPX2 configuration objects.
+Do not pass equivalent ``httpx`` objects across the package boundary.
+If the Screen API should also use HTTPX2, pass a separate HTTPX2 transport as ``screen_transport``.
 
-Existing HTTPX users do not need to change anything. Migrating to HTTPX2 only
-requires selecting the new transport; the CoderPad client methods and returned
-models are unchanged.
+Existing HTTPX users do not need to change anything.
+Migrating to HTTPX2 only requires selecting the new transport.
+The CoderPad client methods and returned models are unchanged.
 
 See the :doc:`api-reference` for full usage details, including the exception hierarchy.
 
