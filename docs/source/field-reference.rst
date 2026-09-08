@@ -13,8 +13,7 @@ Questions
 Writable fields are accepted by
 :meth:`coderpad.client.QuestionsNamespace.create` and
 :meth:`coderpad.client.QuestionsNamespace.update`.  Every other field
-on :class:`~coderpad.types.Question` is populated by the server and
-returned on read only.
+on :class:`~coderpad.types.Question` is populated by the server and returned on read only.
 
 .. list-table::
    :header-rows: 1
