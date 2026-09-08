@@ -770,8 +770,8 @@ class CustomDatabase(_APIModel):
     # These API field names intentionally shadow deprecated BaseModel methods.
     # Pydantic supports this at runtime (pydantic/pydantic#11912), but static
     # type checkers still treat the fields as incompatible method overrides.
-    schema: str  # type: ignore[assignment]  # pyright: ignore[reportIncompatibleMethodOverride]
-    schema_json: CustomDatabaseSchema  # type: ignore[assignment]  # pyright: ignore[reportIncompatibleMethodOverride]
+    schema: str  # type: ignore[assignment]  # pyright: ignore[reportIncompatibleMethodOverride]  # pyrefly: ignore[bad-override]
+    schema_json: CustomDatabaseSchema  # type: ignore[assignment]  # pyright: ignore[reportIncompatibleMethodOverride]  # pyrefly: ignore[bad-override]
 
     @classmethod
     def from_dict(

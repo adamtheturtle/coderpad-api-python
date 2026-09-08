@@ -441,6 +441,7 @@ plugins = [
 [tool.pyrefly]
 search_path = [ "." ]
 errors.non-exhaustive-match = "error"
+enabled-ignores = [ "pyrefly" ]
 preset = "all"
 
 [tool.pyright]
